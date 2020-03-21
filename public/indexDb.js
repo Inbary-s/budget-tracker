@@ -1,4 +1,7 @@
-window.addEventListener('load', ()=>{
+console.log('start here!')
+
+
+// window.addEventListener('load', ()=>{
     
     const indexedDB = window.indexedDB || window.mozIndexdedDB
 || window.webkitIndexedDB || msIndexedDB || window.shimIndexedDB;
@@ -37,6 +40,7 @@ function checkDB(){
     getAll.onsuccess = function(){
         console.log(getAll.result)
         if(getAll.result.length){
+            console.log('firing post to bulk')
             fetch('/api/transaction/bulk', {
                 method: 'POST',
                 body: JSON.stringify(getAll.result),
@@ -45,10 +49,14 @@ function checkDB(){
                     "Content-Type": 'application/json'
                 }
             }).then(response=>{
-                console.log(response)
-            }).catch(err=>console.log(err))
+                response.json()
+            }).then(()=>{
+                const transaction = db.transaction(['pending'], 'readwrite');
+                const store = transaction.objectStore('pending');
+                store.clear()
+            })
         }
     }
-    navigator.onLine ? checkDB() : ''
 }
-})
+// })
+window.addEventListener("online", checkDB);

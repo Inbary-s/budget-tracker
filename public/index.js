@@ -1,3 +1,11 @@
+if ('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+
+    navigator.serviceWorker.register('/service-worker.js').then(reg=>{
+      console.log('service worker successfullly registered!', reg)
+    }).catch(err=>console.log(err))
+  })
+}
 let transactions = [];
 let myChart;
 
@@ -126,6 +134,7 @@ function sendTransaction(isAdding) {
     return response.json();
   })
   .then(data => {
+    console.log('then!')
     if (data.errors) {
       errorEl.textContent = "Missing Information";
     }
@@ -137,6 +146,7 @@ function sendTransaction(isAdding) {
   })
   .catch(err => {
     // fetch failed, so save in indexed db
+    console.log('catch!')
     saveRecord(transaction);
 
     // clear form
